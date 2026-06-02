@@ -1,0 +1,28 @@
+services:
+  animals-service:
+    image: animals-service:latest
+    container_name: animals-service
+    restart: unless-stopped
+    ports:
+      - "5616:5616"
+    env_file:
+      - .env
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      - /usr/share/zoneinfo/America/Los_Angeles:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "-O", "/dev/null", "http://localhost:5616/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
