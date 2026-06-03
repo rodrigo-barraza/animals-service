@@ -26,8 +26,8 @@ describe("Health", () => {
     const handler = health.handler();
     let statusCode, json;
     const res = {
-      status(c) { statusCode = c; return this; },
-      json(d) { json = d; },
+      status(code) { statusCode = code; return this; },
+      json(data) { json = data; },
     };
     await handler({}, res);
     expect(statusCode).toBe(200);
