@@ -1,12 +1,12 @@
 // ─── Sighting Service ───────────────────────────────────────
 
 import { ObjectId } from "mongodb";
-import { getDB } from "@rodrigo-barraza/service-library";
+import { getDatabase } from "@rodrigo-barraza/service-library";
 import { COLLECTIONS } from "../constants.ts";
 import type { SightingDocument, CreateSightingData, ListSightingsFilter } from "../types.ts";
 
 function collection() {
-  return getDB().collection<SightingDocument>(COLLECTIONS.SIGHTINGS);
+  return getDatabase().collection<SightingDocument>(COLLECTIONS.SIGHTINGS);
 }
 
 export async function listSightings(filter: ListSightingsFilter) {

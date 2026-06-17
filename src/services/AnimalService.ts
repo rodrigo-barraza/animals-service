@@ -1,12 +1,12 @@
 // ─── Animal Service ─────────────────────────────────────────
 
 import { ObjectId } from "mongodb";
-import { getDB } from "@rodrigo-barraza/service-library";
+import { getDatabase } from "@rodrigo-barraza/service-library";
 import { COLLECTIONS } from "../constants.ts";
 import type { AnimalDocument, CreateAnimalData, ListAnimalsFilter } from "../types.ts";
 
 function collection() {
-  return getDB().collection<AnimalDocument>(COLLECTIONS.ANIMALS);
+  return getDatabase().collection<AnimalDocument>(COLLECTIONS.ANIMALS);
 }
 
 export async function listAnimals(filter: ListAnimalsFilter) {
