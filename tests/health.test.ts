@@ -8,7 +8,7 @@ import {
   createSecretGuard,
 } from "@rodrigo-barraza/service-library/auth";
 
-import { mockReq, mockRes } from "@rodrigo-barraza/utilities-library/testing";
+import { mockRequest, mockResponse } from "@rodrigo-barraza/utilities-library/testing";
 
 // ── Health ─────────────────────────────────────────────────────
 describe("Health", () => {
@@ -39,32 +39,32 @@ describe("Health", () => {
 describe("Auth", () => {
   it("rejects requests with wrong secret", () => {
     const guard = createSecretGuard("test-secret");
-    const req = mockReq({ headers: { "x-api-secret": "wrong" } });
-    const res = mockRes();
+    const req = mockRequest({ headers: { "x-api-secret": "wrong" } });
+    const res = mockResponse();
     guard(req, res, () => {});
     expect(res._status).toBe(401);
   });
 
   it("allows requests with correct secret", () => {
     const guard = createSecretGuard("test-secret");
-    const req = mockReq({ headers: { "x-api-secret": "test-secret" } });
+    const req = mockRequest({ headers: { "x-api-secret": "test-secret" } });
     let called = false;
-    guard(req, mockRes(), () => { called = true; });
+    guard(req, mockResponse(), () => { called = true; });
     expect(called).toBe(true);
   });
 
   it("bypasses /health endpoint", () => {
     const guard = createSecretGuard("test-secret");
-    const req = mockReq({ path: "/health" });
+    const req = mockRequest({ path: "/health" });
     let called = false;
-    guard(req, mockRes(), () => { called = true; });
+    guard(req, mockResponse(), () => { called = true; });
     expect(called).toBe(true);
   });
 
   it("resolves project from x-project header", () => {
     const mw = createAuthMiddleware();
-    const req = mockReq({ headers: { "x-project": "animals" } });
-    mw(req, mockRes(), () => {});
+    const req = mockRequest({ headers: { "x-project": "animals" } });
+    mw(req, mockResponse(), () => {});
     expect(req.project).toBe("animals");
   });
 });
