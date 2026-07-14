@@ -1,7 +1,7 @@
 // ─── Animal Service ─────────────────────────────────────────
 
 import { ObjectId } from "mongodb";
-import { getDatabase } from "@rodrigo-barraza/service-library";
+import { getDatabase } from "@rodrigo-barraza/utilities-library/service";
 import { COLLECTIONS } from "../constants.ts";
 import type { AnimalDocument, CreateAnimalData, ListAnimalsFilter } from "../types.ts";
 

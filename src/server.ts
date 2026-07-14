@@ -1,4 +1,4 @@
-import { createService } from "@rodrigo-barraza/service-library";
+import { createService } from "@rodrigo-barraza/utilities-library/service";
 import CONFIG from "./config.ts";
 
 import { COLLECTIONS } from "./constants.ts";

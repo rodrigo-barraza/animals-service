@@ -3,7 +3,7 @@
 import { Router, Request, Response } from "express";
 import { asyncHandler } from "@rodrigo-barraza/utilities-library/express";
 import * as AnimalService from "../services/AnimalService.ts";
-import { buildPagination } from "@rodrigo-barraza/service-library";
+import { buildPagination } from "@rodrigo-barraza/utilities-library/service";
 
 const router: Router = Router();
 

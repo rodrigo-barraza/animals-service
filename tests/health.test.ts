@@ -2,11 +2,11 @@
 // Uses createService() from service-library — tests the contract shape.
 
 import { describe, it, expect } from "vitest";
-import { HealthAggregator } from "@rodrigo-barraza/service-library/health";
+import { HealthAggregator } from "@rodrigo-barraza/utilities-library/service/health";
 import {
   createAuthMiddleware,
   createSecretGuard,
-} from "@rodrigo-barraza/service-library/auth";
+} from "@rodrigo-barraza/utilities-library/service/auth";
 
 import { mockRequest, mockResponse } from "@rodrigo-barraza/utilities-library/testing";
 

@@ -21,7 +21,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@rodrigo-barraza/service-library": "github:rodrigo-barraza/service-library",
     "@rodrigo-barraza/utilities-library": "github:rodrigo-barraza/utilities-library",
     "express": "^5.2.1",
     "luxon": "^3.7.2",
