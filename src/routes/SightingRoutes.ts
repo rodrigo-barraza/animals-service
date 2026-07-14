@@ -3,9 +3,9 @@
 import { Router, Request, Response } from "express";
 import { asyncHandler } from "@rodrigo-barraza/utilities-library/express";
 import * as SightingService from "../services/SightingService.ts";
-import { buildPagination } from "../utilities.ts";
+import { buildPagination } from "@rodrigo-barraza/service-library";
 
-const router = Router();
+const router: Router = Router();
 
 // GET /sightings — list sightings
 router.get(
