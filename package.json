@@ -13,6 +13,7 @@
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
+    "seed": "tsx scripts/seed.ts",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "deploy": "bash deploy.sh",
