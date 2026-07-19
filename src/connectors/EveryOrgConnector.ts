@@ -5,10 +5,14 @@
 // we never touch third-party charity money ourselves).
 // ─────────────────────────────────────────────────────────────
 
+import { ApiError, createApiClient } from "@rodrigo-barraza/utilities-library/http";
+
 import CONFIG from "../config.ts";
 import type { CharityResult } from "../types.ts";
 
 const API_BASE = "https://partners.every.org/v0.2";
+
+const api = createApiClient(API_BASE);
 
 export function isEveryOrgConfigured(): boolean {
   return Boolean(CONFIG.EVERYORG_PUBLIC_KEY);
@@ -34,11 +38,16 @@ export function mapEveryOrgNonprofit(nonprofit: Record<string, any>): CharityRes
 }
 
 export async function searchEveryOrg(query: string, limit = 20): Promise<CharityResult[]> {
-  const url = `${API_BASE}/search/${encodeURIComponent(query)}?take=${limit}&apiKey=${CONFIG.EVERYORG_PUBLIC_KEY}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Every.org search failed: ${response.status}`);
+  let data: { nonprofits?: Record<string, unknown>[] };
+  try {
+    data = await api.get(
+      `/search/${encodeURIComponent(query)}?take=${limit}&apiKey=${CONFIG.EVERYORG_PUBLIC_KEY}`,
+    );
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new Error(`Every.org search failed: ${error.status}`);
+    }
+    throw error;
   }
-  const data = (await response.json()) as { nonprofits?: Record<string, unknown>[] };
   return (data.nonprofits || []).map(mapEveryOrgNonprofit);
 }

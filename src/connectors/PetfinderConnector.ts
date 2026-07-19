@@ -5,6 +5,9 @@
 // a synced cache (stale entries are marked removed, see SyncService).
 // ─────────────────────────────────────────────────────────────
 
+import { TokenManager } from "@rodrigo-barraza/utilities-library/node";
+import { ApiError, createApiClient } from "@rodrigo-barraza/utilities-library/http";
+
 import CONFIG from "../config.ts";
 import logger from "../logger.ts";
 import { LISTING_SOURCE, LISTING_STATUS } from "../constants.ts";
@@ -13,16 +16,14 @@ import type { ListingDocument, OrganizationDocument } from "../types.ts";
 const API_BASE = "https://api.petfinder.com/v2";
 const PAGE_LIMIT = 100;
 
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
 export function isPetfinderConfigured(): boolean {
   return Boolean(CONFIG.PETFINDER_API_KEY && CONFIG.PETFINDER_API_SECRET);
 }
 
-async function getAccessToken(): Promise<string> {
-  if (cachedToken && Date.now() < cachedToken.expiresAt - 60_000) {
-    return cachedToken.token;
-  }
+// Tokens last ~1 hour; the old cache refreshed 60s early, which lives in
+// expiresInMilliseconds here (TokenManager holds a token until exactly
+// fetchTime + expiresInMilliseconds).
+const tokenManager = new TokenManager(async () => {
   const response = await fetch(`${API_BASE}/oauth2/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -36,19 +37,23 @@ async function getAccessToken(): Promise<string> {
     throw new Error(`Petfinder token request failed: ${response.status}`);
   }
   const data = (await response.json()) as { access_token: string; expires_in: number };
-  cachedToken = { token: data.access_token, expiresAt: Date.now() + data.expires_in * 1000 };
-  return cachedToken.token;
-}
+  return { token: data.access_token, expiresInMilliseconds: data.expires_in * 1000 - 60_000 };
+});
+
+const api = createApiClient(API_BASE);
 
 async function apiGet(path: string): Promise<Record<string, unknown>> {
-  const token = await getAccessToken();
-  const response = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!response.ok) {
-    throw new Error(`Petfinder GET ${path} failed: ${response.status}`);
+  const token = await tokenManager.getToken();
+  try {
+    return await api.get<Record<string, unknown>>(path, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new Error(`Petfinder GET ${path} failed: ${error.status}`);
+    }
+    throw error;
   }
-  return (await response.json()) as Record<string, unknown>;
 }
 
 // ─── Mappers (exported for tests) ───────────────────────────

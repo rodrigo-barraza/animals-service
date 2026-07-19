@@ -4,6 +4,8 @@
 // Authorization header. Free tier has no request caps.
 // ─────────────────────────────────────────────────────────────
 
+import { ApiError, createApiClient } from "@rodrigo-barraza/utilities-library/http";
+
 import CONFIG from "../config.ts";
 import logger from "../logger.ts";
 import { LISTING_SOURCE, LISTING_STATUS } from "../constants.ts";
@@ -16,17 +18,24 @@ export function isRescueGroupsConfigured(): boolean {
   return Boolean(CONFIG.RESCUEGROUPS_API_KEY);
 }
 
+// Header factory so the API key is read per request (matches the old
+// per-call CONFIG read under vault hot-reload).
+const api = createApiClient(API_BASE, {
+  headers: () => ({
+    Authorization: CONFIG.RESCUEGROUPS_API_KEY,
+    "Content-Type": "application/vnd.api+json",
+  }),
+});
+
 async function apiGet(path: string): Promise<Record<string, unknown>> {
-  const response = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      Authorization: CONFIG.RESCUEGROUPS_API_KEY,
-      "Content-Type": "application/vnd.api+json",
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`RescueGroups GET ${path} failed: ${response.status}`);
+  try {
+    return await api.get<Record<string, unknown>>(path);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new Error(`RescueGroups GET ${path} failed: ${error.status}`);
+    }
+    throw error;
   }
-  return (await response.json()) as Record<string, unknown>;
 }
 
 // ─── Mappers (exported for tests) ───────────────────────────

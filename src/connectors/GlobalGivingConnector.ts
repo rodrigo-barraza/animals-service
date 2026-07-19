@@ -4,10 +4,14 @@
 // giving layer. Donations happen on globalgiving.org.
 // ─────────────────────────────────────────────────────────────
 
+import { ApiError, createApiClient } from "@rodrigo-barraza/utilities-library/http";
+
 import CONFIG from "../config.ts";
 import type { CharityResult } from "../types.ts";
 
 const API_BASE = "https://api.globalgiving.org/api/public";
+
+const api = createApiClient(API_BASE, { headers: { Accept: "application/json" } });
 
 export function isGlobalGivingConfigured(): boolean {
   return Boolean(CONFIG.GLOBALGIVING_API_KEY);
@@ -35,14 +39,17 @@ export async function searchGlobalGiving(query: string, limit = 20): Promise<Cha
     q: query,
     "filter": "theme:animals",
   });
-  const url = `${API_BASE}/services/search/projects?${params}`;
-  const response = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!response.ok) {
-    throw new Error(`GlobalGiving search failed: ${response.status}`);
-  }
-  const data = (await response.json()) as {
+  let data: {
     search?: { response?: { projects?: { project?: Record<string, unknown>[] } } };
   };
+  try {
+    data = await api.get(`/services/search/projects?${params}`);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw new Error(`GlobalGiving search failed: ${error.status}`);
+    }
+    throw error;
+  }
   const projects = data.search?.response?.projects?.project || [];
   return projects.slice(0, limit).map(mapGlobalGivingProject);
 }
