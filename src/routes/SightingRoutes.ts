@@ -1,6 +1,6 @@
 // ─── Sighting Routes ────────────────────────────────────────
 
-import { Router, Request, Response } from "express";
+import { Router, type Request, type Response } from "express";
 import { asyncHandler } from "@rodrigo-barraza/utilities-library/express";
 import * as SightingService from "../services/SightingService.ts";
 import { buildPagination } from "@rodrigo-barraza/utilities-library/service";

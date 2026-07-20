@@ -1,6 +1,6 @@
 // ─── Organization Routes ────────────────────────────────────
 
-import { Router, Request, Response } from "express";
+import { Router, type Request, type Response } from "express";
 import { asyncHandler } from "@rodrigo-barraza/utilities-library/express";
 import { buildPagination } from "@rodrigo-barraza/utilities-library/service";
 import * as OrganizationService from "../services/OrganizationService.ts";

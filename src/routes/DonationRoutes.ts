@@ -1,6 +1,6 @@
 // ─── Donation Routes ────────────────────────────────────────
 
-import { Router, Request, Response } from "express";
+import { Router, type Request, type Response } from "express";
 import { asyncHandler } from "@rodrigo-barraza/utilities-library/express";
 import CONFIG from "../config.ts";
 import * as DonationService from "../services/DonationService.ts";
