@@ -45,7 +45,7 @@ export async function searchEveryOrg(query: string, limit = 20): Promise<Charity
     );
   } catch (error) {
     if (error instanceof ApiError) {
-      throw new Error(`Every.org search failed: ${error.status}`);
+      throw new Error(`Every.org search failed: ${error.status}`, { cause: error });
     }
     throw error;
   }

@@ -32,7 +32,7 @@ async function apiGet(path: string): Promise<Record<string, unknown>> {
     return await api.get<Record<string, unknown>>(path);
   } catch (error) {
     if (error instanceof ApiError) {
-      throw new Error(`RescueGroups GET ${path} failed: ${error.status}`);
+      throw new Error(`RescueGroups GET ${path} failed: ${error.status}`, { cause: error });
     }
     throw error;
   }

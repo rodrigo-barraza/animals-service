@@ -46,7 +46,7 @@ export async function searchGlobalGiving(query: string, limit = 20): Promise<Cha
     data = await api.get(`/services/search/projects?${params}`);
   } catch (error) {
     if (error instanceof ApiError) {
-      throw new Error(`GlobalGiving search failed: ${error.status}`);
+      throw new Error(`GlobalGiving search failed: ${error.status}`, { cause: error });
     }
     throw error;
   }
