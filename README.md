@@ -85,7 +85,7 @@ Sync runs on a cron (`ANIMALS_SYNC_INTERVAL_MINUTES`, default 360) when at least
 npm run start         # Start server
 npm run dev           # Start with auto-reload (tsx watch)
 npm run seed          # Insert sample listings/organizations (idempotent)
-npm run lint          # Run ESLint
+npm run lint          # Run oxlint (.oxlintrc.json)
 npm run lint:fix      # Auto-fix lint issues
 npm run format        # Format with Prettier
 npm run format:check  # Check formatting

@@ -50,7 +50,7 @@ async function apiGet(path: string): Promise<Record<string, unknown>> {
     });
   } catch (error) {
     if (error instanceof ApiError) {
-      throw new Error(`Petfinder GET ${path} failed: ${error.status}`);
+      throw new Error(`Petfinder GET ${path} failed: ${error.status}`, { cause: error });
     }
     throw error;
   }

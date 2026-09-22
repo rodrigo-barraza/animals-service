@@ -123,7 +123,8 @@ export async function createDirectListing(data: Partial<ListingDocument>) {
 
 export async function updateListing(id: string, data: Partial<ListingDocument>) {
   if (!ObjectId.isValid(id)) return null;
-  const { _id, source, sourceId, createdAt, ...rest } = data;
+  // Identity and provenance are not updatable — drop them from the $set.
+  const { _id, source: _source, sourceId: _sourceId, createdAt: _createdAt, ...rest } = data;
   return collection().findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $set: { ...rest, updatedAt: new Date() } },
